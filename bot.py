@@ -13,7 +13,7 @@ from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums.parse_mode import ParseMode
-
+from aiogram.client.session.aiohttp import AiohttpSession
 from classify import classify_message, train, dataset
 
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +21,12 @@ logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-bot = Bot(os.getenv("TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+session = AiohttpSession(proxy=os.getenv("PROXY"))
+bot = Bot(
+    os.getenv("TOKEN"),
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+    session=session,
+)
 dp = Dispatcher()
 
 # Хранилище сообщений, которые были классифицированы как спам для обработки ложных срабатываний (автоматически очищается каждые 24 часа)
@@ -296,4 +301,3 @@ async def main():
 
 
 asyncio.run(main())
-
